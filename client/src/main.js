@@ -12,6 +12,14 @@ import {
   store
 } from './store'
 
+import * as VueGoogleMaps from 'vue2-google-maps'
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDbQoQWg-S8OgEk-2tHpW7UOtye1ZGaOeo'
+  }
+})
+
 Vue.use(Vuex)
 Vue.use(require('vue-resource'));
 Vue.config.productionTip = false

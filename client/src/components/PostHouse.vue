@@ -47,6 +47,28 @@
               <label for="state">State:</label>
               <input type="text" id="state" class="form-control" v-model="newHouse.state">
             </div><br><br>
+            <div class="form-group">
+              <label for="latlong">LatLong:</label>
+              <input type="text" id="latlong" class="form-control" :value="marker.lat+','+marker.lng" placeholder="Latitude Longitude">
+            </div><br><br>
+            <!-- <boardmarker></boardmarker><br><br> -->
+            <div id="mapAddHouse">
+              <gmap-map
+                :center="stateMarker"
+                :zoom="18"
+                :clickable="true"
+                scrollwheel="false"
+                style="width: 100%; height: 500px"
+                v-on:click="mapClicked">
+                  <gmap-marker
+                    :position="stateMarker"
+                    :clickable="true"
+                    :draggable="true"
+                    @g-click="center">
+                  </gmap-marker>
+              </gmap-map>
+            </div>
+
             <input type="submit" class="btn btn-primary" value="Add House" v-on:click="createNewHouse">
           </form>
         </div>
@@ -57,6 +79,8 @@
 </template>
 
 <script>
+import BoardMarker from './BoardMarker'
+
 export default {
   name: 'posthouse',
   data() {
@@ -73,17 +97,49 @@ export default {
         latlong: '',
         city: '',
         state: ''
+      },
+      center: {
+        lat: -6.2372963,
+        lng: 106.7904324
       }
     }
   },
   computed: {
-
+    marker() {
+      return this.$store.getters.marker
+    },
+    stateMarker() {
+      return this.$store.getters.marker
+    }
   },
   methods: {
     createNewHouse() {
-      this.$store.dispatch('createNewHouse', this.newHouse)
+      let house = {
+        title: this.newHouse.title,
+        description: this.newHouse.description,
+        owner: this.newHouse.owner,
+        phone: this.newHouse.phone,
+        size: this.newHouse.size,
+        price: this.newHouse.price,
+        image: this.newHouse.image,
+        location: this.newHouse.location,
+        latlong: `${this.marker.lat},${this.marker.lng}`,
+        city: this.newHouse.city,
+        state: this.newHouse.state
+      }
+      this.$store.dispatch('createNewHouse', house)
       this.$router.push('/')
+    },
+    mapClicked: function(mouseArgs) {
+      let coordinate = {
+        lat: mouseArgs.latLng.lat(),
+        lng: mouseArgs.latLng.lng()
+      }
+      this.$store.commit('setMarker', coordinate)
     }
+  },
+  components: {
+    BoardMarker
   }
 }
 </script>
@@ -99,5 +155,13 @@ label {
 
 .form-inline .form-control {
   width: 600px;
+}
+
+#mapAddHouse {
+  text-align: center;
+  display: block;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 </style>

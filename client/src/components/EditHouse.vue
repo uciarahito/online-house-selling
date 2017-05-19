@@ -6,7 +6,6 @@
           <h3>Update House</h3>
         </div>
         <div id="formhouse" class="panel-body">
-          {{houses}}
           <form id="form" class="form-inline">
             <div class="form-group">
               <label for="bookTitle">Title:</label>
@@ -30,7 +29,7 @@
             </div><br><br>
             <div class="form-group">
               <label for="price">Price:</label>
-              <input type="text" id="price" class="form-control" v-model="newHouse.price" value="">
+              <input type="text" id="price" class="form-control" v-model="newHouse.price">
             </div><br><br>
             <div class="form-group">
               <label for="image">Image:</label>
@@ -48,7 +47,7 @@
               <label for="state">State:</label>
               <input type="text" id="state" class="form-control" v-model="newHouse.state">
             </div><br><br>
-            <input type="submit" class="btn btn-primary" value="Update House">
+            <input type="submit" class="btn btn-primary" value="Update House" v-on:click="saveEditing">
           </form>
         </div>
       </div>
@@ -57,6 +56,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'posthouse',
   data() {
@@ -77,23 +78,30 @@ export default {
     }
   },
   methods: {
-    updateHouse(index) {
-      this.$store.dispatch('updateHouse', this.newHouse)
-      this.$router.push('/')
+    ...mapGetters([
+      'houses'
+    ]),
+    ...mapActions([
+      'updateHouse'
+    ]),
+    saveEditing() {
+      this.updateHouse(this.newHouse)
+      // this.$router.push('/')
+      window.location.href = "/"
+      // this.$store.dispatch('updateHouse', this.newHouse)
+      // this.$router.push('/')
     }
   },
   created() {
     let self = this
-    let data = self.$router.currentRoute
-    console.log(typeof data.query.index);
-    // self.$store.houses[data.query.index]
-    // console.log(self.$store.houses[data.query.index]);
-  },
-  computed: {
-    houses() {
-      let self = this
-      let data = self.$router.currentRoute
-      return this.$store.getters.getHouseById(data.query.index)
+    let house_id = this.$router.currentRoute.query.id
+    console.log('house_id: '+house_id);
+    if (house_id) {
+      let houses = self.houses()
+      let index = houses.findIndex( p => p._id == house_id)
+      if (index != -1) {
+        self.newHouse = houses[index]
+      }
     }
   }
 }

@@ -16,12 +16,12 @@
           </div>
           <div class="media-body">
             <h4 class="media-heading">
-              <a v-on:click="displayDetailHome(house._id)" target="_blank">{{house.title}}</a>
+              <a v-on:click="displayDetailHome(house._id)" :coordinate="house.latlong" target="_blank">{{house.title}}</a>
             </h4>
             <p>{{house.description}}</p>
             <h5><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{house.location}}</h5>
             <h5><i>Owner: {{house.owner}}</i>  &nbsp;&nbsp;<span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> {{house.phone}}</h5>
-            <h5><a href="#">Delete</a>&nbsp;&nbsp;<a v-on:click="displayEditHouse(index)">Edit</a></h5>
+            <h5><a v-on:click="removeHouse(house._id)">Delete</a>&nbsp;&nbsp;<a v-on:click="displayEditHouse(house._id)">Edit</a></h5>
           </div>
         </li>
       </ul>
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'home',
   computed: {
@@ -40,14 +42,18 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'deleteHouse'
+    ]),
     displayAllHouses(house) {
       this.$store.dispatch('houses')
     },
-    displayEditHouse(index) {
+    displayEditHouse(house_id) {
+      console.log(house_id);
       this.$router.push({
-        path: '/edithouse',
+        name: 'EditHouse',
         query: {
-          index: index
+          id: house_id
         }
       })
     },
@@ -59,12 +65,21 @@ export default {
           id: house_id
         }
       })
+    },
+    removeHouse(house_id) {
+      console.log('house_id di Home.vue: ' + house_id);
+      // this.deleteHouse(house_id)
+      // this.$router.push('/')
+      this.$store.dispatch('deleteHouse', house_id)
+      // this.$router.push('/')
+      window.location.href = "/"
     }
   },
   created() {
     let self = this
     console.log('kiki');
     self.displayAllHouses()
+
   }
 }
 </script>

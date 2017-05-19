@@ -5,6 +5,7 @@ import Home from '@/components/Home'
 import PostHouse from '@/components/PostHouse'
 import EditHouse from '@/components/EditHouse'
 import DetailHouse from '@/components/DetailHouse'
+// import MarkerDetail from '@/components/MarkerDetail'
 
 Vue.use(Router)
 
